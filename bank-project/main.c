@@ -26,6 +26,8 @@ int main(void)
 
 	tj = (t_user *)malloc(sizeof(t_user));
 	create_user(tj);
-	printf("c'est très bien\n");
+    printf("Continue comme ça %s \n",tj->username);
+    modify_nameuser(tj);
+    printf("Très bien %s \n",tj->username);
 	return (0);
 }

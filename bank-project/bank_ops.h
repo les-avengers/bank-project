@@ -36,5 +36,6 @@ typedef struct s_user {
 }	t_user;
 
 void	create_user(t_user	*user);
+void    modify_nameuser(t_user *user);
 
 # endif
