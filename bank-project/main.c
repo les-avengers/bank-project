@@ -11,17 +11,21 @@
 /*                                                .'_:___". _..'.  __'.       */
 /*   main.c                                        |__ --==|'-''' '...;       */
 /*                                                [  ]  :[|       |---\       */
-/*   By: tesingh <teghjyot@teghjyot.com>          |__| I=[|     .'    '.      */
+/*   By: teghjyot <teghjyot@teghjyot.com>         |__| I=[|     .'    '.      */
 /*                                                / / ____|     :       '._   */
-/*   Created: 2024/10/17 09:30:20 by tesingh     |-/.____.'      | :      :   */
-/*   Updated: 2024/10/17 09:40:09 by smail        /___ /___      '-'._----'   */
+/*   Created: 2024/10/17 11:59:16 by teghjyot    |-/.____.'      | :      :   */
+/*   Updated: 2024/10/17 11:59:18 by teghjyot     /___ /___      '-'._----'   */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
+#include "bank_ops.h"
 
-int main(int argc, const char * argv[]) {
-	// insert code here...
+int main(void)
+{
+	t_user	*tj;
+
+	tj = (t_user *)malloc(sizeof(t_user));
+	create_user(tj);
 	printf("c'est très bien\n");
-	return 0;
+	return (0);
 }
