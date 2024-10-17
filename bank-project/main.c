@@ -14,7 +14,7 @@
 /*   By: teghjyot <teghjyot@teghjyot.com>         |__| I=[|     .'    '.      */
 /*                                                / / ____|     :       '._   */
 /*   Created: 2024/10/17 11:59:16 by teghjyot    |-/.____.'      | :      :   */
-/*   Updated: 2024/10/17 12:37:46 by smail        /___ /___      '-'._----'   */
+/*   Updated: 2024/10/17 16:17:14 by smail        /___ /___      '-'._----'   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,9 @@ int main(void)
 
 	tj = (t_user *)malloc(sizeof(t_user));
 	create_user(tj);
-    printf("Continue comme ça %s \n",tj->username);
-    modify_nameuser(tj);
-    printf("Très bien %s \n",tj->username);
+    //printf("Continue comme ça %s \n",tj->username);
+    //modify_nameuser(tj);
+    //printf("Très tres bien %s \n",tj->username);
+    menu(tj);
 	return (0);
 }
