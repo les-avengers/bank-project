@@ -32,7 +32,6 @@ void	create_user(t_user	*user)
 	strlcpy(user->username, temp, len + 1);
 	printf("Your username is : %s\n", user->username);
 	bzero(temp, 256);
-	len = 0;
 	printf("Enter password: ");
 	scanf("%s", temp);
 	len = strlen(temp);
