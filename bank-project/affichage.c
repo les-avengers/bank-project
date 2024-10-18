@@ -76,3 +76,55 @@ void menu(t_user *user){
 }
 
 
+void parametres(t_user *user){
+    int numberofcase;
+    
+    
+    printf("\n Paramètres:\n");
+    printf("- 1:Afficher votre numero de compte\n");
+    printf("- 2:Modifier votre numero de compte\n");
+    printf("- 3:Afficher votre mot de passe\n");
+    printf("- 4:Modifier votre mot de passe\n");
+    printf("- 5:Revenir au prècedent menu\n");
+    printf("Veuillez saisir un de ces chiffres: ");
+
+    
+    scanf("%d", &numberofcase);
+    
+    switch (numberofcase) {
+        case 1:
+            afficher_user(user);
+            parametres(user);
+            break;
+        
+        case 2:
+            modify_nameuser(user);
+            parametres(user);
+            break;
+        
+        case 3:
+            afficher_password(user);
+            parametres(user);
+            break;
+            
+            
+        case 4:
+            modify_password(user);
+            parametres(user);
+            break;
+            
+        case 5:
+            menu(user);
+            break;
+            
+            
+        default:
+            printf("Nous somme désolé mais cet opération n'existe pas");
+            parametres(user);
+            break;
+    }
+
+    
+    
+    
+}
