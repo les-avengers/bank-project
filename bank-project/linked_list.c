@@ -22,34 +22,31 @@
 
 t_list	*ft_create_node(void *data)
 {
-	t_list	*head;
+	t_list	*created;
 
-	head = NULL;
-	if (head)
+	created = malloc(sizeof(t_list));
+	if (created)
 	{
-		head->data = data;
-		head->next = NULL;
+		created->data = data;
+		created->next = NULL;
 	}
-	return (head);
+	return (created);
 }
 
 
-void	ft_list_push_front(t_list **begin_list, void *data)
+void ft_list_push_front(t_list **begin_list, void *data)
 {
-	t_list	*push;
-
-	push = NULL;
-	if (*begin_list)
+	t_list *push;
+	
+	if (!begin_list)
+		return;
+	
+	push = ft_create_node(data);
+	if (push)
 	{
-		push = ft_create_node(data);
-		if (push)
-		{
-			push->next = *begin_list;
-			*begin_list = push;
-		}
+		push->next = *begin_list;
+		*begin_list = push;
 	}
-	else
-		*begin_list = ft_create_node(data);
 }
 
 size_t	ft_list_size(t_list *begin_list)
@@ -107,15 +104,17 @@ t_list	*ft_list_push_strs(size_t size, char **strs)
 void	ft_list_clear(t_list *begin_with, void (*free_fct)(void *))
 {
 	t_list	*ptr;
-
-	if (begin_with)
+	
+	if (begin_with && free_fct)
+	{
 		while (begin_with)
 		{
-			(*free_fct)(begin_with->data);
+//			(*free_fct)(begin_with->data);
 			ptr = begin_with->next;
 			free(begin_with);
 			begin_with = ptr;
 		}
+	}
 }
 
 t_list	*ft_list_at(t_list *begin_list, unsigned int nbr)
