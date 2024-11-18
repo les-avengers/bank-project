@@ -21,160 +21,147 @@
 #include "bank_ops.h"
 #include "linked_list.h"
 
-//t_user	*populate_user(char *username, char *password,
-//					   unsigned long balance)
-//{
-//	t_user	*user;
-//
-//	user = NULL;
-//	if ((user = (t_user *)malloc(sizeof(t_user))))
-//	{
-//		user->username = username;
-//		user->password = password;
-//		user->balance = balance;
-//	}
-//	return (user);
-//}
-
-void	show_menu(bool logged_in)
+void show_main_menu(void)
 {
-	printf("\n=== Banking System Menu ===\n");
-	if (!logged_in)
-	{
-		printf("1. Login\n");
-		printf("2. Create Account\n");
-		printf("9. Save and Exit\n");
-	}
-	else
-	{
-		printf("3. Logout\n");
-		printf("4. View Account Balance\n");
-		printf("5. Deposit Money\n");
-		printf("6. Withdraw Money\n");
-		printf("7. Transfer Money\n");
-		printf("8. View Transaction History\n");
-		printf("9. Save and Exit\n");
-	}
+	printf("\n=== Banking System ===\n");
+	printf("%d. Login\n", LOGIN);
+	printf("%d. Create Account\n", CREATE_ACCOUNT);
+	printf("%d. Save and Exit\n", SAVE_EXIT);
+	printf("=======================\n");
+	printf("Enter your choice: ");
+}
+
+void show_transfer_menu(void)
+{
+	printf("\n=== Transfer Management ===\n");
+	printf("%d. Deposit Money\n", DEPOSIT_MONEY);
+	printf("%d. Withdraw Money\n", WITHDRAW_MONEY);
+	printf("%d. Transfer Money\n", TRANSFER_MONEY);
+	printf("%d. View Transaction History\n", VIEW_HISTORY);
 	printf("===========================\n");
 	printf("Enter your choice: ");
 }
 
-int main(void)
+void show_acc_man_menu(void)
 {
-	t_list *head = NULL;
-	t_account *account1 = (t_account *)malloc(sizeof(t_account));
-	account1->acc_no = 101;
-	account1->balance = 1000.0;
-	account1->type = strdup("Savings");
-	account1->next = NULL;
-	
-	t_account *account2 = (t_account *)malloc(sizeof(t_account));
-	account2->acc_no = 102;
-	account2->balance = 5000.0;
-	account2->type = strdup("Investment");
-	account2->next = NULL;
-	account1->next = account2;
-	
-	t_account *account3 = (t_account *)malloc(sizeof(t_account));
-	account3->acc_no = 103;
-	account3->balance = 1000.0;
-	account3->type = strdup("TJ acc");
-	account3->next = NULL;
-	account2->next = account3;
-	
-	t_user user1 = {
-		strdup("Alice"),
-		strdup("Smith"),
-		strdup("password123"),
-		1234567890,
-		10000,
-		account1,
-		3
-	};
-	ft_list_push_front(&head, &user1);
-	
-	t_user user2 = {
-		strdup("John"),         // prénom
-		strdup("Smith"),         // nom
-		strdup("passwrd123"),   // mots_de_passe
-		1234567890,              // numéro_de_téléphone
-		10000,                   // balance
-		account2,                // accounts
-		2
-	};
-	ft_list_push_front(&head, &user2);
-	FILE *file = fopen("user_accounts.bin", "wb");
-	if (file == NULL)
-	{
-		perror("Unable to open file for writing");
-		return (1);
-	}
-	serialize(head, file);
-	fclose(file);
-	printf("===============SERIALIZED DATA===============\n");
-	t_list *current = head;
-	while (current != NULL) {
-		t_user *user = (t_user *)current->data;
-		printf("User: %s %s\n", user->prénom, user->nom);
-		t_account *acc = user->accounts;
-		while (acc != NULL) {
-			printf("Account: %lu, Type: %s, Balance: %.2f\n", acc->acc_no, acc->type, acc->balance);
-			acc = acc->next;
-		}
-		current = current->next;
-	}
-	current = NULL;
-	printf("=============DESERIALIZED DATA===============\n");
-	ft_list_clear(head, free);
-	file = fopen("user_accounts.bin", "rb");
-	if (file == NULL)
-	{
-		perror("Unable to open file for reading");
-		return 1;
-	}
-	t_list *deserialized_head = deserialize(file);
-	fclose(file);
-	current = deserialized_head;
-	while (current != NULL)
-	{
-		t_user *user = (t_user *)current->data;
-		printf("User: %s %s\n", user->prénom, user->nom);
-		t_account *acc = user->accounts;
-		while (acc != NULL)
-		{
-			printf("Account: %lu, Type: %s, Balance: %.2f\n", acc->acc_no, acc->type, acc->balance);
-			acc = acc->next;
-		}
-		current = current->next;
-	}
-	ft_list_clear(deserialized_head, free);
-	return (0);
+	printf("\n=== Account Management ===\n");
+	printf("%d. Create Another Account\n", CREATE_ACCOUNT_OPTION);
+	printf("%d. Delete Account\n", DELETE_ACCOUNT);
+	printf("%d. Logout\n", LOGOUT);
+	printf("%d. View Balance\n", VIEW_BALANCE);
+	printf("%d. Gerer vos comptes\n", MANAGE_ACCOUNTS);
+	printf("%d. Save and Exit\n", SAVE_EXIT);
+	printf("===========================\n");
+	printf("Enter your choice: ");
+}
+
+int	find_user(void *data, void *user_id)
+{
+	if (((t_user *)data)->user_id == (unsigned long long)user_id)
+		return (0);
+	return (1);
 }
 
 
-//int main(void)
-//{
-//	t_list	**users;
-//	short	choice;
-//	bool	logged_in;
-//
-//	users = NULL;
-//	choice = -1;
-//	logged_in = 0;
-//	users = malloc(sizeof(t_list *));
-//	do
-//	{
-//		show_menu(logged_in);
-//		scanf("%hd", &choice);
-//		switch (choice) {
-//			case 1:
-//				printf("Pass\n");
-//				break;
-//				
-//			default:
-//				break;
-//		}
-//	}
-//	while (choice != 9);
-//	return (0);
-//}
+int main(void)
+{
+	t_list				*users;
+	t_list				*node;
+	e_options			choice;
+	unsigned long		index;
+	unsigned long long	logged_in;
+	FILE				*file;
+
+	srand((unsigned int)time(NULL));
+	file = fopen("user_accounts.bin", "rb+");
+	if (file == NULL) {
+		if ((file = fopen("user_accounts.bin", "wb+")) == NULL)
+		{
+			perror("Unable to open file for reading/writing");
+			return (1);
+		}
+		users = NULL;
+	} else {
+		users = deserialize(file);
+	}
+	choice = INVALID_OPTION;
+	logged_in = 0;
+	do
+	{
+		if (logged_in == 0)
+		{
+			show_main_menu();
+			scanf("%d", &choice);
+			switch (choice)
+			{
+				case LOGIN:
+					user_login(users, &logged_in);
+					break;
+				case CREATE_ACCOUNT:
+					create_user(&users);
+					break;
+				case SAVE_EXIT:
+					serialize(users, file);
+					return (0);
+				default:
+					printf("Invalid choice. Please try again.\n");
+			}
+		}
+		else if (choice == MANAGE_ACCOUNTS)
+		{
+			show_transfer_menu();
+			scanf("%d", &choice);
+			node = ft_list_find(users, (void *)logged_in, &find_user);
+			index = choose_account(((t_user *)node->data));
+			switch (choice)
+			{
+				case DEPOSIT_MONEY:
+					depot(((t_user*)node->data), index);
+					break;
+				case WITHDRAW_MONEY:
+					retrait(((t_user*)node->data), index);
+					break;
+				case TRANSFER_MONEY:
+					//					transfer_money();
+					break;
+				case VIEW_HISTORY:
+					print_history(((t_user*)node->data), index);
+					break;
+				default:
+					printf("Invalid option. Please try again.\n");
+					break;
+			}
+		}
+		else
+		{
+			show_acc_man_menu();
+			scanf("%d", &choice);
+			node = ft_list_find(users, (void *)logged_in, &find_user);
+			switch (choice)
+			{
+				case CREATE_ACCOUNT_OPTION:
+					create_account(((t_user *)node->data));
+					break;
+				case DELETE_ACCOUNT:
+					printf("Deleting account (feature coming soon)...\n");
+					break;
+				case LOGOUT:
+					user_logout(&logged_in);
+					break;
+				case VIEW_BALANCE:
+					view_balance(((t_user*)node->data));
+					break;
+				case MANAGE_ACCOUNTS:
+					break;
+				case SAVE_EXIT:
+					serialize(users, file);
+					return (0);
+				default:
+					printf("Invalid option. Please try again.\n");
+					break;
+			}
+		}
+	}
+	while (choice != SAVE_EXIT);
+	return (1);
+}

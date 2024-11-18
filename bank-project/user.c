@@ -21,31 +21,126 @@
 #include "bank_ops.h"
 #include "user.h"
 
-//void	create_user(t_user	*user)
-//{
-//	char	temp[256];
-//	size_t	len;
-//	
-//	bzero(temp, 256);
-//	printf("Enter votre prénom: ");
-//	scanf("%s", temp);
-//	len = strlen(temp);
-//	user->prénom = (char *)malloc((len + 1));
-//	strlcpy(user->prénom, temp, len + 1);
-//	bzero(temp, 256);
-//	printf("Enter votre nom: ");
-//	scanf("%s", temp);
-//	len = strlen(temp);
-//	user->nom = (char *)malloc((len + 1) * sizeof(char));
-//	strlcpy(user->nom, temp, len + 1);
-//	printf("Enter votre numéro de téléphone: ");
-//	scanf("%ld", &(user->numéro_de_téléphone));
-//	printf("Enter vos mots de passe: ");
-//	scanf("%s", temp);
-//	len = strlen(temp);
-//	user->mots_de_passe = (char *)malloc((len + 1) * sizeof(char));
-//	strlcpy(user->mots_de_passe, temp, len + 1);
-//}
+unsigned long long	generate_unique_id(void)
+{
+	static unsigned long long	counter;
+	unsigned long long			timestamp;
+	unsigned long long			id;
+	
+	timestamp = (uint64_t)time(NULL);
+	if (timestamp % 1000 == 0)
+		counter = 0;
+	id = (timestamp << 16) | (counter++);
+	return (id);
+}
+
+void	get_string(const char *prompt, char **dest)
+{
+	char	temp[256];
+
+	printf("%s", prompt);
+	fgets(temp, sizeof(temp), stdin);
+	temp[strcspn(temp, "\n")] = 0;
+	*dest = strdup(temp);
+}
+
+void	user_receipt(t_user	*user)
+{
+	if (user == NULL)
+	{
+		printf("Error: User data is NULL.\n");
+		return;
+	}
+	printf("Your account was successfully created.\n");
+	printf("User ID: %llu\n", user->user_id);
+	printf("Name: %s %s\n", user->prénom, user->nom);
+	printf("Phone Number: %lu\n", user->numéro_de_téléphone);
+
+	if (user->num_accounts > 0)
+	{
+		printf("You have %zu account(s):\n", user->num_accounts);
+		t_list *current_account = user->accounts;
+		for (size_t i = 0; current_account != NULL; ++i)
+		{
+			t_account *account = (t_account *)current_account->data;
+			printf("Account #%zu:\n", i + 1);
+			printf("\tAccount Number: %lu\n", account->acc_no);
+			printf("\tAccount Type: ");
+			switch (account->type)
+			{
+				case COMPTE_COURANT:
+					printf("Current Account\n");
+					break;
+				case LIVRET_EPARGNE:
+					printf("Savings Account\n");
+					break;
+				default:
+					printf("Unknown Type\n");
+					break;
+			}
+			printf("\tBalance: %.2f\n", account->balance);
+			printf("\tIBAN: %s\n", account->iban);
+			printf("\tCreated: %s", ctime(&account->creation_time));
+			current_account = current_account->next;
+		}
+	}
+	else
+		printf("No accounts have been created yet.\n");
+	printf("\nThank you for using our service!\n");
+}
+
+void	create_user(t_list **users)
+{
+	t_user	*user;
+
+	user = (t_user *)malloc(sizeof(t_user));
+	user->user_id = generate_unique_id();
+	getchar();
+	get_string("Entrez votre prénom: ", &user->prénom);
+	get_string("Entrez votre nom: ", &user->nom);
+	printf("Entrez votre numéro de téléphone: ");
+	scanf("%ld", &user->numéro_de_téléphone);
+	getchar();
+	get_string("Entrez vos mots de passe: ", &user->mots_de_passe);
+	create_account(user);
+	user->num_accounts = ft_list_size(user->accounts);
+	user_receipt(user);
+	ft_list_push_front(users, user);
+}
+
+void	user_login(t_list *users, unsigned long long *logged_in)
+{
+	char	*uid;
+	char	*pwd;
+	t_list	*current;
+	t_user	*user;
+
+	getchar();
+	get_string("uid: ", &uid);
+	get_string("pwd: ", &pwd);
+	current = users;
+	while (current != NULL)
+	{
+		user = (t_user *)current->data;
+		if (atoll(uid) && user->user_id
+			&& !strncmp(pwd, user->mots_de_passe, strlen(pwd)))
+		{
+			*logged_in = user->user_id;
+			printf("Bienvenue %s %s!\n", user->prénom, user->nom);
+			break;
+		}
+		else
+			*logged_in = 0;
+		current = current->next;
+	}
+}
+
+void	user_logout(unsigned long long *logged_in)
+{
+	*logged_in = 0;
+	printf("You have logged out successfully.\n");
+}
+
 //
 //void	print_user(void *data)
 //{

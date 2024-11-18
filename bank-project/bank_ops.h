@@ -30,42 +30,76 @@
 # include <readline/history.h>
 # include <string.h>
 # include <stdbool.h>
+# include <math.h>
+# include <time.h>
 # include "account.h"
 # include "serialize.h"
 # include "deserialize.h"
 # include "user.h"
 
+typedef enum
+{
+	LOGIN = 1,
+	CREATE_ACCOUNT,
+	VIEW_ACCOUNT_OPTIONS,
+	CREATE_ACCOUNT_OPTION,
+	DELETE_ACCOUNT,
+	LOGOUT,
+	VIEW_BALANCE,
+	MANAGE_ACCOUNTS,
+	DEPOSIT_MONEY,
+	WITHDRAW_MONEY,
+	TRANSFER_MONEY,
+	VIEW_HISTORY,
+	SAVE_EXIT,
+	INVALID_OPTION = -1
+}	e_options;
+
+typedef enum
+{
+	COMPTE_COURANT,
+	LIVRET_EPARGNE
+}	e_account_type;
 
 typedef struct	s_account
 {
-	unsigned long		acc_no;
-	double				balance;
-	char				*type;
-	struct s_account	*next;
+	unsigned long	acc_no;
+	double			balance;
+	e_account_type	type;
+	char			*iban;
+	time_t			creation_time;
 }	t_account;
 
 typedef struct	s_user
 {
-	char			*prénom;
-	char			*nom;
-	char			*mots_de_passe;
-	unsigned long	numéro_de_téléphone;
-	size_t			balance;
-	t_account		*accounts;
-	size_t			num_accounts;
+	unsigned long long	user_id;
+	char				*prénom;
+	char				*nom;
+	char				*mots_de_passe;
+	char				*twofa_secret;
+	char				*backup_codes;
+	unsigned long		numéro_de_téléphone;
+	size_t				balance;
+	t_list				*accounts;
+	size_t				num_accounts;
 }	t_user;
 
+void	create_account(t_user *user);
+void	user_login(t_list *users, unsigned long long *logged_in);
+void	user_logout(unsigned long long *logged_in);
+void	view_balance(t_user *user);
+unsigned long	choose_account(t_user *user);
+void	print_history(t_user *user, unsigned long i);
 
-void    menu(t_user *user);
-void	create_user(t_user	*user);
-void    modify_nameuser(t_user *user);
+void	create_user(t_list **users);
 void    set_balance(t_user *user);
 void    voir_balance(t_user *user);
-void    depot(t_user *user);
-void    retrait(t_user *user);
+void    depot(t_user *user, unsigned long i);
+void    retrait(t_user *user, unsigned long i);
 void    modify_password(t_user *user);
 void    afficher_user(t_user *user);
 void    afficher_password(t_user *user);
 void    parametres(t_user *user);
+void	get_string(const char *prompt, char **dest);
 
 # endif

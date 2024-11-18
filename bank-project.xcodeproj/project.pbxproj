@@ -23,9 +23,29 @@
 		B3AA3D302CC0F32B003747E2 /* bank-tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "bank-tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+		B3831DA42CEA7CA5007B0AD5 /* Exceptions for "bank-project" folder in "Compile Sources" phase from "bank-project" target */ = {
+			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
+			buildPhase = B3AA3D1E2CC0E722003747E2 /* Sources */;
+			membershipExceptions = (
+				account.h,
+				bank_ops.h,
+				deserialize.h,
+				history.h,
+				linked_list.h,
+				oauth.h,
+				serialize.h,
+				user.h,
+			);
+		};
+/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		B3AA3D242CC0E722003747E2 /* bank-project */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				B3831DA42CEA7CA5007B0AD5 /* Exceptions for "bank-project" folder in "Compile Sources" phase from "bank-project" target */,
+			);
 			path = "bank-project";
 			sourceTree = "<group>";
 		};
@@ -308,6 +328,7 @@
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -319,6 +340,7 @@
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

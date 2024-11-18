@@ -41,32 +41,33 @@ void write_string(FILE *file, const char *str)
 	}
 }
 
-void	serialize_account_list(FILE *file, t_account *account)
+void	serialize_account_list(FILE *file, t_list *accounts)
 {
-	while (account != NULL)
+	t_account	*account;
+	t_list		*current_accounts;
+
+	current_accounts = accounts;
+	account = NULL;
+	while (current_accounts != NULL)
 	{
+		account = (t_account *)current_accounts->data;
 		fwrite(&account->acc_no, sizeof(unsigned long), 1, file);
 		fwrite(&account->balance, sizeof(double), 1, file);
-		write_string(file, account->type);
-		account = account->next;
+		fwrite(&account->type, sizeof(e_account_type), 1, file);
+		write_string(file, account->iban);
+		fwrite(&account->creation_time, sizeof(time_t), 1, file);
+		current_accounts = current_accounts->next;
 	}
 }
 
 void serialize_user(FILE *file, t_user *user)
 {
-	size_t	prénom_len;
-	size_t	nom_len;
-	size_t	mot_len;
-
-	prénom_len = strlen(user->prénom) + 1;
-	fwrite(&prénom_len, sizeof(size_t), 1, file);
-	fwrite(user->prénom, sizeof(char), prénom_len, file);
-	nom_len = strlen(user->nom) + 1;
-	fwrite(&nom_len, sizeof(size_t), 1, file);
-	fwrite(user->nom, sizeof(char), nom_len, file);
-	mot_len = strlen(user->mots_de_passe) + 1;
-	fwrite(&mot_len, sizeof(size_t), 1, file);
-	fwrite(user->mots_de_passe, sizeof(char), mot_len, file);
+	fwrite(&user->user_id, sizeof(uint64_t), 1, file);
+	write_string(file, user->prénom);
+	write_string(file, user->nom);
+	write_string(file, user->mots_de_passe);
+	write_string(file, user->twofa_secret);
+	write_string(file, user->backup_codes);
 	fwrite(&user->numéro_de_téléphone, sizeof(unsigned long), 1, file);
 	fwrite(&user->balance, sizeof(size_t), 1, file);
 	fwrite(&user->num_accounts, sizeof(size_t), 1, file);

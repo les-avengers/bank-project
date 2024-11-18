@@ -24,112 +24,69 @@ char	*read_string(FILE *file)
 	return (str);
 }
 
-t_account *deserialize_account(FILE *file, size_t num_accounts)
+t_list	*deserialize_account(FILE *file, size_t num_accounts)
 {
-	t_account		*account = NULL;
-	t_account		*tail = NULL;
-	unsigned long	acc_no;
-	double			balance;
-	char			*type;
+	t_list	*head;
+	t_account	*new_account;
+	size_t		i;
 
-	for (size_t i = 0; i < num_accounts; ++i)
+	head = NULL;
+	i = 0;
+	while (i < num_accounts)
 	{
-		size_t		read_count;
-		t_account	*new_account;
-		read_count = fread(&acc_no, sizeof(unsigned long), 1, file);
-		if (read_count != 1)
-			break;
-		read_count = fread(&balance, sizeof(double), 1, file);
-		if (read_count != 1)
-			break;
-		type = read_string(file);
-		if (!type) break;
-		
 		new_account = (t_account *)malloc(sizeof(t_account));
 		if (!new_account)
 		{
 			fprintf(stderr, "Error: Memory allocation for account failed\n");
 			break;
 		}
-		new_account->acc_no = acc_no;
-		new_account->balance = balance;
-		new_account->type = type;
-		new_account->next = NULL;
-		
-		if (tail)
-			tail->next = new_account;
-		else
-			account = new_account;
-		tail = new_account;
+		fread(&new_account->acc_no, sizeof(unsigned long), 1, file);
+		fread(&new_account->balance, sizeof(double), 1, file);
+		fread(&new_account->type, sizeof(e_account_type), 1, file);
+		new_account->iban = read_string(file);
+		fread(&new_account->creation_time, sizeof(time_t), 1, file);
+		ft_list_push_front(&head, new_account);
+		i++;
 	}
-	return (account);
+	return (head);
 }
 
 
 t_user *deserialize_user(FILE *file)
 {
-	size_t	len;
 	t_user	*user;
 
 	user = malloc(sizeof(t_user));
 	if (!user)
-		return NULL;
-	if (fread(&len, sizeof(size_t), 1, file) != 1)
-		return NULL;
-	user->prénom = malloc(len);
-	if (!user->prénom)
-		return NULL;
-	if (fread(user->prénom, sizeof(char), len, file) != len)
-		return NULL;
-	if (fread(&len, sizeof(size_t), 1, file) != 1)
-		return NULL;
-	user->nom = malloc(len);
-	if (!user->nom)
-		return NULL;
-	if (fread(user->nom, sizeof(char), len, file) != len)
-		return NULL;
-	if (fread(&len, sizeof(size_t), 1, file) != 1)
-		return NULL;
-	user->mots_de_passe = malloc(len);
-	if (!user->mots_de_passe)
-		return NULL;
-	if (fread(user->mots_de_passe, sizeof(char), len, file) != len)
-		return NULL;
-	if (fread(&user->numéro_de_téléphone, sizeof(unsigned long), 1, file) != 1)
-		return NULL;
-	if (fread(&user->balance, sizeof(size_t), 1, file) != 1)
-		return NULL;
-	if (fread(&user->num_accounts, sizeof(size_t), 1, file) != 1)
-		return NULL;
+		return (NULL);
+	fread(&user->user_id, sizeof(uint64_t), 1, file);
+	user->prénom = read_string(file);
+	user->nom = read_string(file);
+	user->mots_de_passe = read_string(file);
+	user->twofa_secret = read_string(file);
+	user->backup_codes = read_string(file);
+	fread(&user->numéro_de_téléphone, sizeof(size_t), 1, file);
+	fread(&user->balance, sizeof(size_t), 1, file);
+	fread(&user->num_accounts, sizeof(size_t), 1, file);
 	user->accounts = deserialize_account(file, user->num_accounts);
+	if (!user->user_id)
+		return (NULL);
 	return (user);
 }
 
-t_list *deserialize(FILE *file)
+t_list	*deserialize(FILE *file)
 {
-	t_list	*head = NULL;
-	t_list	*tail = NULL;
-	
+	t_list	*head;
+	t_user	*user;
+
+	head = NULL;
+	user = NULL;
 	while (1)
 	{
-		t_list	*new_node;
-		t_user	*user;
-
 		user = deserialize_user(file);
 		if (!user)
 			break;
-		new_node = ft_create_node(user);
-		if (!new_node)
-		{
-			fprintf(stderr, "Error creating node\n");
-			break;
-		}
-		if (tail)
-			tail->next = new_node;
-		else
-			head = new_node;
-		tail = new_node;
+		ft_list_push_front(&head, user);
 	}
-	
-	return head;
+	return (head);
 }
