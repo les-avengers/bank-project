@@ -27,13 +27,7 @@
 		B3C0E72B2CEC5B2A0097487C /* Exceptions for "bank-project" folder in "bank-project" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				account.o,
-				deserialize.o,
-				linked_list.o,
-				main.o,
 				Makefile,
-				serialize.o,
-				user.o,
 			);
 			target = B3AA3D212CC0E722003747E2 /* bank-project */;
 		};

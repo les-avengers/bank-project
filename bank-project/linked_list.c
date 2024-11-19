@@ -201,8 +201,8 @@ void	ft_list_delete_node(t_list **begin_list, t_list *node_to_delete, void (*fre
 	if (*begin_list == node_to_delete)
 	{
 		*begin_list = node_to_delete->next;
-		(*free_fct)(node_to_delete->data);
-		free(node_to_delete);
+		if (node_to_delete)
+			free(node_to_delete);
 		return;
 	}
 	current = *begin_list;
