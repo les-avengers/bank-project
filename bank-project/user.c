@@ -171,6 +171,7 @@ void	delete_user(t_list **users, t_user **user)
 	if ((*user)->backup_codes)
 		free((*user)->backup_codes);
 	ft_list_clear((*user)->accounts, free);
-	free(*user);
 	ft_list_delete_node(users, ft_list_find(*users, (void *)*user, &find_user), free);
+	if (user && *user)
+		free(*user);
 }

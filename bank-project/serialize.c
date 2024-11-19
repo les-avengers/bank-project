@@ -74,11 +74,17 @@ void serialize_user(FILE *file, t_user *user)
 void serialize(t_list *begin_list, FILE *file)
 {
 	t_list	*current = begin_list;
+	t_list	*next = NULL;
+	t_user	*user;
 	
 	while (current != NULL)
 	{
-		serialize_user(file, (t_user *)current->data);
-		current = current->next;
+		user = (t_user *)current->data;
+		serialize_user(file, user);
+		delete_user(&begin_list, &user);
+		next = current->next;
+		ft_list_delete_node(&begin_list, current, free);
+		current = next;
 	}
 	ft_list_clear(begin_list, NULL);
 }
