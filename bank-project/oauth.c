@@ -6,6 +6,3 @@
 //
 
 #include "oauth.h"
-#include <time.h>
-//#include "oath.h"
-

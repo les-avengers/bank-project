@@ -1,1 +1,9 @@
 Depot: 100.000000, New Balance: 100.000000
+Depot: 200.000000, Nouveau solde: 200.000000
+Transfert: 100.000000, Nouveau solde: 101.676180
+Depot: 100.000000, Nouveau solde: 100.000000
+Transfert: 50.000000, Nouveau solde: 50.845976
+Transfert: 50.000000, Nouveau solde: 1.276274
+Depot: 100.000000, Nouveau solde: 100.000000
+Depot: 100.000000, Nouveau solde: 100.000000
+Depot: 100.000000, Nouveau solde: 100.000000

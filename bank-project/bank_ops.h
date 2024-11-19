@@ -43,7 +43,7 @@ typedef enum
 	CREATE_ACCOUNT,
 	VIEW_ACCOUNT_OPTIONS,
 	CREATE_ACCOUNT_OPTION,
-	DELETE_ACCOUNT,
+	DELETE_USER,
 	LOGOUT,
 	VIEW_BALANCE,
 	MANAGE_ACCOUNTS,
@@ -51,6 +51,8 @@ typedef enum
 	WITHDRAW_MONEY,
 	TRANSFER_MONEY,
 	VIEW_HISTORY,
+	DELETE_ACCOUNT,
+	CHOOSE_ACC,
 	SAVE_EXIT,
 	INVALID_OPTION = -1
 }	e_options;
@@ -84,18 +86,22 @@ typedef struct	s_user
 	size_t				num_accounts;
 }	t_user;
 
-void	create_account(t_user *user);
-void	user_login(t_list *users, unsigned long long *logged_in);
-void	user_logout(unsigned long long *logged_in);
-void	view_balance(t_user *user);
+void			create_account(t_user *user);
+void			user_login(t_list *users, unsigned long long *logged_in);
+void			user_logout(unsigned long long *logged_in);
+void			view_balance(t_user *user);
 unsigned long	choose_account(t_user *user);
-void	print_history(t_user *user, unsigned long i);
+void			print_history(t_user *user, unsigned long i);
+void			transfer(t_list *users, t_user **user, unsigned long i);
+void			delete_account(t_user **user, unsigned long i);
+void			delete_user(t_list **users, t_user **user);
+int				find_user(void *data, void *user_id);
 
 void	create_user(t_list **users);
 void    set_balance(t_user *user);
 void    voir_balance(t_user *user);
-void    depot(t_user *user, unsigned long i);
-void    retrait(t_user *user, unsigned long i);
+void    depot(t_user **user, unsigned long i);
+void    retrait(t_user **user, unsigned long i);
 void    modify_password(t_user *user);
 void    afficher_user(t_user *user);
 void    afficher_password(t_user *user);

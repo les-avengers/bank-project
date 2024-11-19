@@ -6,9 +6,6 @@
 //
 
 #include "serialize.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include "bank_ops.h"
 
 void write_string(FILE *file, const char *str)
@@ -76,11 +73,12 @@ void serialize_user(FILE *file, t_user *user)
 
 void serialize(t_list *begin_list, FILE *file)
 {
-	t_list *current = begin_list;
+	t_list	*current = begin_list;
 	
 	while (current != NULL)
 	{
 		serialize_user(file, (t_user *)current->data);
 		current = current->next;
 	}
+	ft_list_clear(begin_list, NULL);
 }

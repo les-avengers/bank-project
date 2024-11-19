@@ -21,47 +21,41 @@
 #include "bank_ops.h"
 #include "linked_list.h"
 
-void show_main_menu(void)
+void	show_main_menu(void)
 {
-	printf("\n=== Banking System ===\n");
-	printf("%d. Login\n", LOGIN);
-	printf("%d. Create Account\n", CREATE_ACCOUNT);
-	printf("%d. Save and Exit\n", SAVE_EXIT);
+	printf("\n=== Système Bancaire ===\n");
+	printf("%d. Se Connecter\n", LOGIN);
+	printf("%d. Créer un Compte\n", CREATE_ACCOUNT);
+	printf("%d. Sauvegarder et Quitter\n", SAVE_EXIT);
 	printf("=======================\n");
-	printf("Enter your choice: ");
+	printf("Entrez votre choix : ");
 }
 
-void show_transfer_menu(void)
+void	show_transfer_menu(void)
 {
-	printf("\n=== Transfer Management ===\n");
-	printf("%d. Deposit Money\n", DEPOSIT_MONEY);
-	printf("%d. Withdraw Money\n", WITHDRAW_MONEY);
-	printf("%d. Transfer Money\n", TRANSFER_MONEY);
-	printf("%d. View Transaction History\n", VIEW_HISTORY);
+	printf("\n=== Gestion des Transferts ===\n");
+	printf("%d. Déposer de l'Argent\n", DEPOSIT_MONEY);
+	printf("%d. Retirer de l'Argent\n", WITHDRAW_MONEY);
+	printf("%d. Transférer de l'Argent\n", TRANSFER_MONEY);
+	printf("%d. Voir l'Historique des Transactions\n", VIEW_HISTORY);
+	printf("%d. Supprimer un Compte\n", DELETE_ACCOUNT);
+	printf("%d. Choisir un autre compte\n", CHOOSE_ACC);
 	printf("===========================\n");
-	printf("Enter your choice: ");
+	printf("Entrez votre choix : ");
 }
 
-void show_acc_man_menu(void)
+void	show_acc_man_menu(void)
 {
-	printf("\n=== Account Management ===\n");
-	printf("%d. Create Another Account\n", CREATE_ACCOUNT_OPTION);
-	printf("%d. Delete Account\n", DELETE_ACCOUNT);
-	printf("%d. Logout\n", LOGOUT);
-	printf("%d. View Balance\n", VIEW_BALANCE);
-	printf("%d. Gerer vos comptes\n", MANAGE_ACCOUNTS);
-	printf("%d. Save and Exit\n", SAVE_EXIT);
+	printf("\n=== Gestion du Compte ===\n");
+	printf("%d. Créer un Autre Compte\n", CREATE_ACCOUNT_OPTION);
+	printf("%d. Supprimer l'Utilisateur\n", DELETE_USER);
+	printf("%d. Se Déconnecter\n", LOGOUT);
+	printf("%d. Voir le Solde\n", VIEW_BALANCE);
+	printf("%d. Gérer vos Comptes\n", MANAGE_ACCOUNTS);
+	printf("%d. Sauvegarder et Quitter\n", SAVE_EXIT);
 	printf("===========================\n");
-	printf("Enter your choice: ");
+	printf("Entrez votre choix : ");
 }
-
-int	find_user(void *data, void *user_id)
-{
-	if (((t_user *)data)->user_id == (unsigned long long)user_id)
-		return (0);
-	return (1);
-}
-
 
 int main(void)
 {
@@ -71,13 +65,14 @@ int main(void)
 	unsigned long		index;
 	unsigned long long	logged_in;
 	FILE				*file;
+	e_options			view_window;
 
 	srand((unsigned int)time(NULL));
 	file = fopen("user_accounts.bin", "rb+");
 	if (file == NULL) {
 		if ((file = fopen("user_accounts.bin", "wb+")) == NULL)
 		{
-			perror("Unable to open file for reading/writing");
+			perror("Impossible d'ouvrir le fichier en lecture/écriture");
 			return (1);
 		}
 		users = NULL;
@@ -85,6 +80,7 @@ int main(void)
 		users = deserialize(file);
 	}
 	choice = INVALID_OPTION;
+	view_window = INVALID_OPTION;
 	logged_in = 0;
 	do
 	{
@@ -92,6 +88,7 @@ int main(void)
 		{
 			show_main_menu();
 			scanf("%d", &choice);
+			getchar();
 			switch (choice)
 			{
 				case LOGIN:
@@ -104,31 +101,50 @@ int main(void)
 					serialize(users, file);
 					return (0);
 				default:
-					printf("Invalid choice. Please try again.\n");
+					printf("Choix invalide. Veuillez réessayer.\n");
 			}
 		}
-		else if (choice == MANAGE_ACCOUNTS)
+		else if (view_window == MANAGE_ACCOUNTS)
 		{
 			show_transfer_menu();
 			scanf("%d", &choice);
+			getchar();
 			node = ft_list_find(users, (void *)logged_in, &find_user);
-			index = choose_account(((t_user *)node->data));
+			if (node == NULL || node->data == NULL) {
+				printf("Utilisateur non trouvé ou données utilisateur invalides.\n");
+				continue;
+			}
+			t_user *user = (t_user *)node->data;
+			index = choose_account(user);
+			if (index >= user->num_accounts)
+			{
+				printf("L'index du compte n'existe pas\n");
+				view_window = INVALID_OPTION;
+				continue;
+			}
 			switch (choice)
 			{
 				case DEPOSIT_MONEY:
-					depot(((t_user*)node->data), index);
+					depot(&user, index);
 					break;
 				case WITHDRAW_MONEY:
-					retrait(((t_user*)node->data), index);
+					retrait(&user, index);
 					break;
 				case TRANSFER_MONEY:
-					//					transfer_money();
+					transfer(users, &user, index);
 					break;
 				case VIEW_HISTORY:
-					print_history(((t_user*)node->data), index);
+					print_history(user, index);
+					break;
+				case DELETE_ACCOUNT:
+					delete_account(&user, index);
+					view_window = INVALID_OPTION;
+					break;
+				case CHOOSE_ACC:
+					view_window = INVALID_OPTION;
 					break;
 				default:
-					printf("Invalid option. Please try again.\n");
+					printf("Option invalide. Veuillez réessayer.\n");
 					break;
 			}
 		}
@@ -136,28 +152,35 @@ int main(void)
 		{
 			show_acc_man_menu();
 			scanf("%d", &choice);
+			getchar();
 			node = ft_list_find(users, (void *)logged_in, &find_user);
+			if (node == NULL || node->data == NULL) {
+				printf("Utilisateur non trouvé ou données utilisateur invalides.\n");
+				continue;
+			}
+			t_user *user = (t_user *)node->data;
 			switch (choice)
 			{
 				case CREATE_ACCOUNT_OPTION:
-					create_account(((t_user *)node->data));
+					create_account(user);
 					break;
-				case DELETE_ACCOUNT:
-					printf("Deleting account (feature coming soon)...\n");
+				case DELETE_USER:
+					delete_user(&users, &user);
 					break;
 				case LOGOUT:
 					user_logout(&logged_in);
 					break;
 				case VIEW_BALANCE:
-					view_balance(((t_user*)node->data));
+					view_balance(user);
 					break;
 				case MANAGE_ACCOUNTS:
+					view_window = MANAGE_ACCOUNTS;
 					break;
 				case SAVE_EXIT:
 					serialize(users, file);
 					return (0);
 				default:
-					printf("Invalid option. Please try again.\n");
+					printf("Option invalide. Veuillez réessayer.\n");
 					break;
 			}
 		}

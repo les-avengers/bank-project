@@ -88,7 +88,7 @@ t_list	*ft_list_push_strs(size_t size, char **strs)
 {
 	t_list	*elem;
 	t_list	*elem2;
-	int		i;
+	size_t	i;
 
 	elem = ft_create_node(strs[0]);
 	i = 0;
@@ -109,9 +109,9 @@ void	ft_list_clear(t_list *begin_with, void (*free_fct)(void *))
 	{
 		while (begin_with)
 		{
-//			(*free_fct)(begin_with->data);
+			(*free_fct)(begin_with->data);
 			ptr = begin_with->next;
-			free(begin_with);
+//			free(begin_with);
 			begin_with = ptr;
 		}
 	}
@@ -189,5 +189,32 @@ void	ft_list_remove_if(t_list **begin_list,
 		}
 		else
 			list = list->next;
+	}
+}
+
+void	ft_list_delete_node(t_list **begin_list, t_list *node_to_delete, void (*free_fct)(void *))
+{
+	t_list	*current;
+
+	if (!begin_list || !*begin_list || !node_to_delete)
+		return;
+	if (*begin_list == node_to_delete)
+	{
+		*begin_list = node_to_delete->next;
+		(*free_fct)(node_to_delete->data);
+		free(node_to_delete);
+		return;
+	}
+	current = *begin_list;
+	while (current && current->next)
+	{
+		if (current->next == node_to_delete)
+		{
+			current->next = node_to_delete->next;
+			(*free_fct)(node_to_delete->data);
+			free(node_to_delete);
+			return;
+		}
+		current = current->next;
 	}
 }
